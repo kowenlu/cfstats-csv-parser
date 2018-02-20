@@ -11,8 +11,7 @@ import static com.jl.CfStatsParser.utils.FileUtils.writeCFStatsToFile;
 public class ScanCFStatsFolder {
 
     public static final List<String> CF_ANALYSIS_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
-        add("apConfig");
-        add("ttgRadiusProxyStats");
+        add("ColumnFamilyA"); // Add your columnfamily here
     }});
 
     public static void main(String[] args){
@@ -37,9 +36,9 @@ public class ScanCFStatsFolder {
             List<String[]> result = new ArrayList<String[]>();
             String[] header = new String[4];
             header[0] = "Timestamp";
-            header[1] = "Read Count";
-            header[2] = "Read Latency";
-            header[3] = "Pending task";
+            header[1] = CFName + " Read Count";
+            header[2] = CFName + " Read Latency";
+            header[3] = CFName + " Pending task";
             result.add(header);
             analysisResultMap.put(CFName, result);
         }
