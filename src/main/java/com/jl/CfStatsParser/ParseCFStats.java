@@ -1,6 +1,7 @@
 package com.jl.CfStatsParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.jl.CfStatsParser.utils.Constants.AVGLCPERSLICE;
@@ -54,7 +55,7 @@ public class ParseCFStats {
 		return newCsvList;
 	}
 	
-	public void parseCFStats(){
+	public void parseCFStats(HashMap<String, Integer> CFAndLineMapping){
 		String keySpace = "";
 		String columnFamily = "";
 		String type = "";
@@ -70,7 +71,7 @@ public class ParseCFStats {
 			String value = "";
 			
 			if (isNewPrintLn(key, value, columnFamily, keySpace, i, fileList.size())){
-				createNewRow(rArray);
+				createNewRow(CFAndLineMapping, rArray);
 				rArray = new String[24];
 			}
 			
@@ -78,9 +79,16 @@ public class ParseCFStats {
 			if (line.indexOf(":") >= 0){
 				key = line.substring(0, line.indexOf(":"));
 				value = line.substring(line.indexOf(":") + 2, line.length());
-				
+
+				// Remove "(index)" in the key
+				if (key.indexOf("(index)") != -1) {
+					String origKey = new String(key);
+					key = line.substring(0, key.indexOf("(index)")).trim();
+					//System.out.println(value + ": " + origKey + " ==> " + key);
+				}
+
 				if (isNewPrintLn(key, value, columnFamily, keySpace, i, fileList.size())){
-					createNewRow(rArray);
+					createNewRow(CFAndLineMapping, rArray);
 					rArray = new String[24];
 				}
 				
@@ -213,8 +221,12 @@ public class ParseCFStats {
 		
 	}
 	
-	private void createNewRow(String[] rArray){
+	private void createNewRow(HashMap<String, Integer> CFAndLineMapping, String[] rArray){
 		newCsvList.add(rArray);
+
+		int index = newCsvList.indexOf(rArray);
+		CFAndLineMapping.put(rArray[1], index);
+		//System.out.println("CF/Keyspace '" + rArray[1] + "' is put in list position " + index);
 	}
 	
 	private boolean isNewKeySpace(String key, String value, String keySpace){

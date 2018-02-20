@@ -3,6 +3,8 @@ package com.jl.CfStatsParser;
 import com.jl.CfStatsParser.ImportCFStats;
 import com.jl.CfStatsParser.ParseCFStats;
 
+import java.util.HashMap;
+
 import static com.jl.CfStatsParser.utils.FileUtils.writeCFStatsToFile;
 
 public class CreateCFStatsCSV {
@@ -14,7 +16,8 @@ public class CreateCFStatsCSV {
 		} else{
 			ImportCFStats iCfs = new ImportCFStats();
 			ParseCFStats pCfs = new ParseCFStats(iCfs.importFile(args[0]));
-			pCfs.parseCFStats();
+			HashMap<String, Integer> CFAndLineMapping = new HashMap<String, Integer>();
+			pCfs.parseCFStats(CFAndLineMapping);
 			writeCFStatsToFile(pCfs.getCsvList(),args[1]);
 			System.out.println("Created the new csv - " + args[1]);
 		}
